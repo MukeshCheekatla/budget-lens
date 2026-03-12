@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: budget-lens-api
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "https://budget-lens.vercel.app"
+      - key: PORT
+        value: "8000"
+    healthCheckPath: /health
+
+databases:
+  - name: budget-lens-db
+    plan: free
+    region: singapore
