@@ -3,6 +3,7 @@ main.py -- AP Budget 2026-27 FastAPI application.
 
 Endpoints:
   GET /                      health check + version info
+  GET /health                Render health check
   GET /years                 all available fiscal years
   GET /departments           top 50 departments by total budget_estimate
   GET /department/{name}     all rows for a department (filterable)
@@ -47,7 +48,6 @@ async def lifespan(app: FastAPI):
     yield
     await close_db()
 
-
 # ---------------------------------------------------------------------------
 # App
 # ---------------------------------------------------------------------------
@@ -74,6 +74,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ---------------------------------------------------------------------------
+# GET /health
+# ---------------------------------------------------------------------------
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """Render health check -- returns {status: ok} with HTTP 200."""
+    return {"status": "ok"}
+
 
 # ---------------------------------------------------------------------------
 # Helper
@@ -82,7 +91,6 @@ app.add_middleware(
 def _rows_to_dicts(rows) -> list[dict]:
     """Convert asyncpg Record list to list of plain dicts."""
     return [dict(r) for r in rows]
-
 
 # ---------------------------------------------------------------------------
 # GET /
@@ -96,7 +104,6 @@ async def root():
         version="1.0.0",
         description="AP Budget 2026-27 API. Visit /docs for interactive documentation.",
     )
-
 
 # ---------------------------------------------------------------------------
 # GET /years
@@ -120,7 +127,6 @@ async def get_years():
         return YearsResponse(fiscal_years=years, count=len(years))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
-
 
 # ---------------------------------------------------------------------------
 # GET /departments
@@ -177,7 +183,6 @@ async def list_departments(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
-
 # ---------------------------------------------------------------------------
 # GET /department/{dept_name}
 # ---------------------------------------------------------------------------
@@ -232,7 +237,6 @@ async def get_department(
         raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
-
 
 # ---------------------------------------------------------------------------
 # GET /search
@@ -331,7 +335,6 @@ async def search(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
-
 # ---------------------------------------------------------------------------
 # GET /majorhead/{code}
 # ---------------------------------------------------------------------------
@@ -381,7 +384,6 @@ async def get_majorhead(
         raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
-
 
 # ---------------------------------------------------------------------------
 # GET /schemes/top
@@ -440,7 +442,6 @@ async def top_schemes(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
-
 # ---------------------------------------------------------------------------
 # GET /summary
 # ---------------------------------------------------------------------------
@@ -491,7 +492,6 @@ async def get_summary(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
-
 # ---------------------------------------------------------------------------
 # GET /scsp
 # ---------------------------------------------------------------------------
@@ -508,14 +508,14 @@ async def get_scsp(
     OR scheme_name ILIKE '%scsp%' OR scheme_name ILIKE '% sc %'.
     """
     pool = await get_pool()
-    conditions = [
-        """(
-            source_pdf ILIKE '%sc%'
-            OR scheme_name ILIKE '%scheduled caste%'
-            OR scheme_name ILIKE '%scsp%'
-            OR scheme_name ILIKE '% sc %'
-            OR scheme_name ILIKE '%sc component%'
-        )"""
+    conditions = [\
+        """(\
+            source_pdf ILIKE '%sc%'\
+            OR scheme_name ILIKE '%scheduled caste%'\
+            OR scheme_name ILIKE '%scsp%'\
+            OR scheme_name ILIKE '% sc %'\
+            OR scheme_name ILIKE '%sc component%'\
+        )"""\
     ]
     params: list = []
     idx = 1
@@ -547,7 +547,6 @@ async def get_scsp(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
-
 # ---------------------------------------------------------------------------
 # GET /tsp
 # ---------------------------------------------------------------------------
@@ -564,14 +563,14 @@ async def get_tsp(
     OR scheme_name ILIKE '%tribal%' OR scheme_name ILIKE '%tsp%'.
     """
     pool = await get_pool()
-    conditions = [
-        """(
-            source_pdf ILIKE '%st%'
-            OR scheme_name ILIKE '%scheduled tribe%'
-            OR scheme_name ILIKE '%tribal%'
-            OR scheme_name ILIKE '%tsp%'
-            OR scheme_name ILIKE '%st component%'
-        )"""
+    conditions = [\
+        """(\
+            source_pdf ILIKE '%st%'\
+            OR scheme_name ILIKE '%scheduled tribe%'\
+            OR scheme_name ILIKE '%tribal%'\
+            OR scheme_name ILIKE '%tsp%'\
+            OR scheme_name ILIKE '%st component%'\
+        )"""\
     ]
     params: list = []
     idx = 1
