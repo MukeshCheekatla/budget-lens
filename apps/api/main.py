@@ -105,6 +105,11 @@ async def root():
         description="AP Budget 2026-27 API. Visit /docs for interactive documentation.",
     )
 
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 # ---------------------------------------------------------------------------
 # GET /years
 # ---------------------------------------------------------------------------
