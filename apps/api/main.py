@@ -80,7 +80,7 @@ app.add_middleware(
 
 @app.get("/health", tags=["Health"])
 async def health_check():
-    """Render health check -- returns {status: ok} with HTTP 200."""
+    """Render health check -- no DB dependency, always returns 200."""
     return {"status": "ok"}
 
 
@@ -105,10 +105,6 @@ async def root():
         description="AP Budget 2026-27 API. Visit /docs for interactive documentation.",
     )
 
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
 
 # ---------------------------------------------------------------------------
 # GET /years
