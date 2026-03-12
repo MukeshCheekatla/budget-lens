@@ -17,7 +17,12 @@ _pool: asyncpg.Pool | None = None
 async def init_db() -> None:
     """Create the asyncpg connection pool. Called once on app startup."""
     global _pool
-    database_url = os.environ["DATABASE_URL"]
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not set. "
+            "Add it in the Render dashboard under Environment."
+        )
     _pool = await asyncpg.create_pool(
         dsn=database_url,
         min_size=2,
