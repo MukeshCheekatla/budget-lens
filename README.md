@@ -54,5 +54,4 @@ yarn dev
 | `/departments` | All departments with budget totals |
 | `/department/[name]` | Single department detail + schemes |
 | `/search?q=...` | Search results |
-| `/scst` | SC/ST allocations (SCSP + TSP) |
 | `/schemes` | Top 50 schemes leaderboard |
